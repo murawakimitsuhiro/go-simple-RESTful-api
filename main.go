@@ -34,7 +34,7 @@ func init() {
 	}
 
 	db.DB()
-	db.AutoMigrate(&models.Memo{})
+	db.AutoMigrate(&models.Note{})
 }
 
 func routers() *chi.Mux {
