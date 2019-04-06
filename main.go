@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/murawakimitsuhiro/go-simple-RESTful-api/models"
+
 	"github.com/jinzhu/gorm"
 
 	"github.com/go-chi/chi"
@@ -34,7 +36,7 @@ func main() {
 	}
 
 	db.DB()
-	db.AutoMigrate(&Note{})
+	db.AutoMigrate(&models.Note{})
 
 	routers()
 	http.ListenAndServe(":8005", Logger())
@@ -50,14 +52,8 @@ func routers() *chi.Mux {
 	return router
 }
 
-type Note struct {
-	gorm.Model
-	Title   string `json:"title"`
-	Content string `json:"content"`
-}
-
 func CreateNote(w http.ResponseWriter, r *http.Request) {
-	var note Note
+	var note models.Note
 	json.NewDecoder(r.Body).Decode(&note)
 
 	tx := db.Begin()
@@ -69,7 +65,7 @@ func CreateNote(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateNote(w http.ResponseWriter, r *http.Request) {
-	var note Note
+	var note models.Note
 	id := chi.URLParam(r, "id")
 	json.NewDecoder(r.Body).Decode(&note)
 
@@ -90,7 +86,7 @@ func DeleteNote(w http.ResponseWriter, r *http.Request) {
 	tx := db.Begin()
 	defer tx.Rollback()
 
-	tx.Where("ID = ?", id).Delete(Note{})
+	tx.Where("ID = ?", id).Delete(models.Note{})
 
 	tx.Commit()
 
