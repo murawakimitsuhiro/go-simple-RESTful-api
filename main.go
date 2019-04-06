@@ -2,27 +2,27 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
+	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/murawakimitsuhiro/go-simple-RESTful-api/handler"
+	"github.com/kelseyhightower/envconfig"
 
 	"github.com/murawakimitsuhiro/go-simple-RESTful-api/driver"
-
-	"github.com/go-chi/chi"
-	_ "github.com/go-sql-driver/mysql"
-)
-
-const (
-	dbName = "go_simple_RESTful"
-	dbPass = ""
-	dbHost = "localhost"
-	dbPort = "3306"
+	"github.com/murawakimitsuhiro/go-simple-RESTful-api/handler"
 )
 
 func main() {
-	connection, err := driver.ConnectGorm(dbHost, dbPort, "root", dbPass, dbName)
+	config := driver.DBConnectionConfig{}
+	err := envconfig.Process("go_simple_restful", &config)
+	if err != nil {
+		log.Fatal(err.Error())
+		os.Exit(-1)
+	}
+
+	connection, err := driver.ConnectGorm(config)
 	if err != nil {
 		fmt.Printf("Failed to connect to database: %v\n", err)
 		os.Exit(-1)
