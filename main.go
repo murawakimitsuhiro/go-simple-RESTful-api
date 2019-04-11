@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -42,6 +43,7 @@ func routers(db *driver.DB) *chi.Mux {
 
 	nHandler := handler.NewNoteHandler(db)
 
+	r.Get("/ping", ping)
 	r.Get("/notes", nHandler.Fetch)
 	r.Get("/notes/{id}", nHandler.GetByID)
 	r.Post("/notes", nHandler.Create)
@@ -49,4 +51,12 @@ func routers(db *driver.DB) *chi.Mux {
 	r.Delete("/notes/{id}", nHandler.Delete)
 
 	return r
+}
+
+func ping(w http.ResponseWriter, r *http.Request) {
+	response, _ := json.Marshal(map[string]string{"ping": "pong"})
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
 }
