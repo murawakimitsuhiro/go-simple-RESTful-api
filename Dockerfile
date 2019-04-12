@@ -23,4 +23,4 @@ RUN dep ensure -v -update
 
 CMD ["go", "run", "main.go"]
 
-EXPOSE 9000
+EXPOSE 8005
